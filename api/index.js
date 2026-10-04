@@ -1,0 +1,18 @@
+const {getStore}=require('../lib/store');const {equal,token,authenticated,cookie,hash}=require('../lib/auth');const {validate}=require('../lib/validate');
+function createHandler({store=getStore,env=process.env}={}){return async function handler(req,res){res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');const send=(status,data)=>{res.statusCode=status;res.setHeader('Content-Type','application/json; charset=utf-8');res.end(JSON.stringify(data))};
+ try{const parsed=new URL(req.url,'http://'+req.headers.host);const route=req.query?.route||parsed.searchParams.get('route')||parsed.pathname.replace(/^\/api\/?/,'');
+ const missing=['DATABASE_URL','ADMIN_PASSWORD','SESSION_SECRET'].filter(k=>!env[k]);if(env.SESSION_SECRET&&env.SESSION_SECRET.length<32)missing.push('SESSION_SECRET (ən azı 32 simvol)');if(env.ADMIN_PASSWORD&&env.ADMIN_PASSWORD.length<8)missing.push('ADMIN_PASSWORD (ən azı 8 simvol)');
+ if(route==='status'&&req.method==='GET')return send(200,{configured:!missing.length,missing});
+ if(['POST','PUT','DELETE','PATCH'].includes(req.method)){let origin;try{origin=new URL(req.headers.origin)}catch{return send(403,{error:'Sorğu mənbəyi doğrulanmadı.'})}if(origin.host!==req.headers.host||!['http:','https:'].includes(origin.protocol))return send(403,{error:'Sorğu mənbəyi uyğun deyil.'});if(req.method!=='DELETE'&&!(req.headers['content-type']||'').startsWith('application/json'))return send(415,{error:'JSON sorğusu tələb olunur.'})}
+ if(route==='logout'&&req.method==='POST'){res.setHeader('Set-Cookie',cookie('',req,0));return send(200,{ok:true})}
+ if(route==='session'&&req.method==='GET')return send(200,{authenticated:authenticated(req,env),configured:!missing.length,missing});
+ if(missing.length)return send(503,{error:'Vercel ayarlarında bu dəyişənləri əlavə edin: '+missing.join(', '),missing});
+ let body=req.body;if(typeof body==='string'){if(body.length>300000)return send(413,{error:'Məlumat çox böyükdür.'});try{body=JSON.parse(body)}catch{return send(400,{error:'JSON formatı yanlışdır.'})}}
+ if(Number(req.headers['content-length'])>300000)return send(413,{error:'Məlumat çox böyükdür.'});
+ if(route==='login'&&req.method==='POST'){if(typeof body?.password!=='string'||body.password.length>500)return send(400,{error:'Şifrəni daxil edin.'});const key=hash(req.headers['x-real-ip']||req.socket?.remoteAddress||'unknown').toString('hex');const db=store();if(!await db.attempt(key))return send(429,{error:'Çox sayda giriş cəhdi. 15 dəqiqə sonra yenidən yoxlayın.'});if(!equal(body.password,env.ADMIN_PASSWORD))return send(401,{error:'Şifrə yanlışdır.'});await db.clear(key);res.setHeader('Set-Cookie',cookie(token(env),req));return send(200,{ok:true})}
+ if(route==='content'&&req.method==='GET'){const data=await store().read();return send(200,{...data,products:data.products.filter(p=>p.active)})}
+ if(route==='admin/content'){if(!authenticated(req,env))return send(401,{error:'Sessiya bitib. Yenidən daxil olun.'});if(req.method==='GET')return send(200,await store().read());if(req.method==='PUT'){let content;try{content=validate(body)}catch(e){return send(e.status||400,{error:e.message})}const data=await store().write(content,body.revision);return data?send(200,data):send(409,{error:'Məlumat başqa pəncərədə dəyişib. Yenidən yükləyin; bu pəncərədəki dəyişikliklər saxlanmayıb.'})}return send(405,{error:'Metod dəstəklənmir.'})}
+ return send(404,{error:'API yolu tapılmadı.'});
+ }catch(e){console.error('ORVEN API error:',e.code||e.name);return send(503,{error:'Database bağlantısı qurulmadı. DATABASE_URL və Neon bağlantısını yoxlayın.'})}
+}}
+module.exports=createHandler();module.exports.createHandler=createHandler;

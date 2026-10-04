@@ -1,0 +1,4 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process');const root=path.resolve(__dirname,'..');
+for(const folder of ['api','lib','scripts','assets/js'])for(const file of fs.readdirSync(path.join(root,folder))){if(file.endsWith('.js'))execFileSync(process.execPath,['--check',path.join(root,folder,file)])}
+for(const file of fs.readdirSync(root).filter(f=>f.endsWith('.html'))){const text=fs.readFileSync(path.join(root,file),'utf8');for(const m of text.matchAll(/(?:src|href)="([^"#]+)"/g)){if(/^(https?:|data:)/.test(m[1]))continue;const target=m[1].split(/[?#]/)[0].replace(/^\//,'');assert.ok(fs.existsSync(path.join(root,target)),file+': missing '+target)}}
+JSON.parse(fs.readFileSync(path.join(root,'vercel.json')));console.log('JavaScript syntax, 12 HTML page links and Vercel JSON verified');

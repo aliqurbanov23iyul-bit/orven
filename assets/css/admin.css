@@ -2,7 +2,7 @@
   background: #fff8f9;
   min-height: 100vh;
   margin: 0;
-  font-family: inherit;
+  font-family: 'DM Sans', Arial, sans-serif;
 }
 
 /* ===================================================
@@ -618,3 +618,5 @@ button:disabled {
     flex-wrap: wrap;
   }
 }
+/* Actual server-authenticated admin entry */
+.admin-header,.admin-shell{display:none}.authenticated .admin-header{display:flex}.authenticated .admin-shell{display:block}.admin-login-screen{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;background:white}.authenticated .admin-login-screen{display:none}.login-card{max-width:510px;width:100%;padding:65px 45px;justify-self:center;align-self:center}.login-brand{font:800 47px/1 Manrope;letter-spacing:-.075em;display:block;margin-bottom:65px}.login-brand span{color:var(--red)}.login-card h1{font-size:42px;margin-bottom:22px}.login-card>p{font-size:15px;color:#947281}.login-card form{margin-top:30px}.login-card label{display:block;font-size:14px;margin-bottom:10px}.password-row{display:flex;gap:10px}.password-row input{min-width:0;flex:1;border:1px solid #e7d3dc;border-radius:14px;background:#fff7f9;padding:14px 16px}.password-row button{border:0;background:#fff0f4;border-radius:14px;padding:10px 13px;font-size:12px;color:#a74e6b}.login-card form>.button{width:100%;margin-top:15px}.login-card #login-error-msg{font-size:13px;color:#b9284e;min-height:23px;margin:13px 0 0}.login-back{display:inline-block;font-size:13px;margin-top:25px;color:#9c6d7e}.login-art{background:var(--red);color:white;display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;position:relative}.login-art>span{font:800 110px/1 Manrope;letter-spacing:-.08em;z-index:2}.login-art>b{font-size:230px;line-height:1.2;animation:badge-spin 28s linear infinite;color:#ffbac8}.login-art p{font-size:17px;letter-spacing:.04em}.brand-name{font:800 35px/1 Manrope;letter-spacing:-.06em}.brand-accent{color:var(--red)}.brand-caption{display:block;font-size:10px;letter-spacing:.08em;color:#a26e7f;margin-top:5px}.admin-header .brand{display:block}.admin-header-actions{display:flex;gap:10px}.admin-body:not(.authenticated){background:white}.admin-body .admin-title h1{font-size:40px}@media(max-width:720px){.admin-login-screen{grid-template-columns:1fr}.login-art{display:none}.login-card{padding:45px 27px}.login-brand{margin-bottom:50px}.login-card h1{font-size:35px}.admin-header-actions .button{font-size:11px;padding:9px 13px}.admin-body .admin-title h1{font-size:32px}.brand-name{font-size:28px}}
