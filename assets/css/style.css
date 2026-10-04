@@ -5,7 +5,7 @@
 @media(max-width:380px){.hero h1{font-size:3rem}.hero-visual{height:380px}.product-image{height:220px}.product-caption>span{display:none}.motion-photo img{height:160px}.motion-collage{height:300px}.detail-image img{height:410px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.motion-ready .reveal{opacity:1;transform:none}}
 /* Supplied ORVEN artwork: crop the surrounding black canvas in the header. */
-.brand-logo{width:190px;height:44px;overflow:hidden;border-radius:7px;background:#000;transition:transform .3s}
-.brand-logo img{width:100%;height:100%;object-fit:cover;object-position:center 49%;display:block}
+.brand-logo{width:190px;height:44px;overflow:hidden;border-radius:7px;background:transparent;transition:transform .3s}
+.brand-logo img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 .brand-logo:hover{transform:translateY(-2px)}
 @media(max-width:720px){.brand-logo{width:150px;height:36px}}
